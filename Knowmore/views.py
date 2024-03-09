@@ -1,4 +1,5 @@
 import os
+import json
 
 from django.http import StreamingHttpResponse
 from django.shortcuts import render
@@ -17,8 +18,12 @@ async def ask_claude(query):
                 model="claude-3-opus-20240229",
             ) as stream:
                 async for text in stream.text_stream:
-                    print(text, end="", flush=True)
-                    yield f"data: {text} \n\n"
+                    message = {
+                         'content' : text
+                    }
+                    data = json.dumps(message)
+                    print(data)
+                    yield "data: " + data + "\n\n"
                 yield f"data: <END_STREAMING_SSE>\n\n"
 
     except Exception as e:

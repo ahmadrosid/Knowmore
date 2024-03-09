@@ -62,7 +62,6 @@
 {% endblock content %}
 
 {% block script %}
-
 <script>
     let eventSource;
     const sseData = document.getElementById('sse-data');
@@ -93,6 +92,7 @@
     function startSSE(query) {
         const csrftoken = getCookie('csrftoken');
         eventSource = new EventSource('/stream/'+ "?csrfmiddlewaretoken=" + csrftoken + "&query=" + query);
+        let streamText = "";
         eventSource.onmessage = (event) => {
             if (event.data === "<END_STREAMING_SSE>") {
                 eventSource.close();
@@ -103,7 +103,9 @@
                 inputQuery.value = ""
             }
             sseData.classList.remove("hidden")
-            sseData.innerHTML += event.data
+            const data = JSON.parse(event.data);
+            streamText += data.content
+            sseData.innerText = streamText
         };
     }
 
