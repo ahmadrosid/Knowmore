@@ -17,5 +17,4 @@ ANTHROPIC_API_KEY=sk-ant-api...
 
 For know it integrate with Anthropic AI. Soon will be adding openai gpt4 and other LLM.
 
-
-![demo](screenshot.png)
+![demo](demo.png)
