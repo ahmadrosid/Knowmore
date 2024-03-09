@@ -1,0 +1,5 @@
+node_modules/
+static/CACHE/
+.venv/
+bun.lockb
+db.sqlite3
