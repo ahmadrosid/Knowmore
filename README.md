@@ -18,3 +18,11 @@ ANTHROPIC_API_KEY=sk-ant-api...
 ## Integration
 
 For know it integrate with Anthropic AI. Soon will be adding openai gpt4 and other LLM.
+
+## Credits
+
+This project is inspired by this company.
+
+- [Devv AI](https://devv.ai/)
+- [Perplexity](https://www.perplexity.ai/)
+
