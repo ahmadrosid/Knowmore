@@ -1,0 +1,4 @@
+anthropic
+Django>=4.2
+daphne>=4.1
+django-compressor>=4.0

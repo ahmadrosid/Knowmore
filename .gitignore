@@ -3,3 +3,4 @@ static/CACHE/
 .venv/
 bun.lockb
 db.sqlite3
+.env

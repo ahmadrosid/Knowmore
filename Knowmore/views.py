@@ -15,14 +15,13 @@ async def ask_claude(query):
         async with client.messages.stream(
                 max_tokens=1024,
                 messages=[{"role": "user", "content": query}],
-                model="claude-3-opus-20240229",
+                model="claude-3-5-sonnet-20240620",
             ) as stream:
                 async for text in stream.text_stream:
                     message = {
                          'content' : text
                     }
                     data = json.dumps(message)
-                    print(data)
                     yield "data: " + data + "\n\n"
                 yield f"data: <END_STREAMING_SSE>\n\n"
 

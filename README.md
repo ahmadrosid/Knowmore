@@ -25,4 +25,41 @@ This project is inspired by this company.
 
 - [Devv AI](https://devv.ai/)
 - [Perplexity](https://www.perplexity.ai/)
+## Run
+
+Install python packages.
+
+```bash
+pip install -r requirements.txt
+```
+
+Install npm dependencies.
+
+```bash
+npm install
+```
+
+Run python server.
+
+```bash
+python manage.py runserver
+```
+
+Using docker.
+
+Build docker image.
+
+```bash
+docker build . -t knowmore-app
+```
+
+Ru docker image
+
+```bash
+docker run --env-file .env -p 7000:8000 knowmore-app:latest
+```
+
+Now visit.
+
+http://localhost:7000
 
