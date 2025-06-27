@@ -23,7 +23,7 @@ function AssistantMessage({ message }: { message: MessageItem }) {
     }
 
     return (
-        <Message className="justify-start">
+        <Message className="justify-start px-2">
             <div className="flex w-full flex-col gap-4">
                 <MessageContent markdown className="bg-transparent p-0">
                     {message.content}
@@ -78,7 +78,9 @@ export function ChatMessage({ messages }: { messages: MessageItem[] }) {
                         <Message className="justify-start">
                             <MessageContent>{message.content}</MessageContent>
                         </Message>
-                        <ChatSource filterTags={[]} searchResults={[]}/>
+                        <div className="px-2">
+                            <ChatSource filterTags={[]} searchResults={[]}/>
+                        </div>
                     </div>
                 ) : (
                     <AssistantMessage key={message.id} message={message} />

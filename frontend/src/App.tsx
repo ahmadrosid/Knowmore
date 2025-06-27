@@ -22,7 +22,7 @@ export default function App() {
       <div
         className={cn(
           messages.length > 0 && "h-[95vh]",
-          "max-w-2xl w-full mx-auto px-8 flex flex-col relative transition-all duration-500 ease-in-out"
+          "max-w-3xl w-full mx-auto px-12 flex flex-col relative transition-all duration-500 ease-in-out"
         )}
       >
         {messages.length > 0 && <ChatHeader />}
@@ -43,7 +43,7 @@ export default function App() {
         </ChatContainerRoot>
         <div
           className={cn(
-            "px-6",
+            "px-12",
             messages.length > 0
               ? "absolute bottom-0 left-0 right-0 transform translate-y-0 transition-all duration-500 delay-300 ease-in-out"
               : "transform -translate-y-20"
