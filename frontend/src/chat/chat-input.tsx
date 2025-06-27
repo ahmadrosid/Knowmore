@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { ArrowUp, Square } from "lucide-react"
 import { type ChatRequestOptions } from "@ai-sdk/ui-utils";
+import { cn } from "@/lib/utils";
 
 interface ChatInputProps {
     input: string;
@@ -39,13 +40,13 @@ export function ChatInput({ input, setInput, handleSubmit, status }: ChatInputPr
           <Button
             variant="default"
             size="icon"
-            className="h-8 w-8 rounded-full"
+            className={cn(input.length === 0 && "bg-primary/75" ,"h-8 w-8 rounded-full")}
             onClick={handleSubmit}
           >
             {isLoading ? (
-              <Square className="size-5 fill-current" />
+              <Square className="size-3 fill-current" />
             ) : (
-              <ArrowUp className="size-5" />
+              <ArrowUp className="size-4" />
             )}
           </Button>
         </PromptInputAction>

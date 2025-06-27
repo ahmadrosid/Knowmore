@@ -9,7 +9,6 @@ import {
   ChatContainerScrollAnchor,
 } from "@/components/ui/chat-container"
 import { ScrollButton } from "@/components/ui/scroll-button"
-import { Loader } from './components/ui/loader';
 import { ChatHeader } from './chat/chat-header';
 
 export default function App() {
@@ -31,8 +30,7 @@ export default function App() {
           "scrollbar-hidden transition-opacity duration-500 ease-in-out"
         )}>
           <ChatContainerContent>
-            <ChatMessage messages={messages} />
-            {status === "submitted" && <Loader variant='typing' />}
+            <ChatMessage messages={messages} isLoading={status === "submitted"} />
             <ChatContainerScrollAnchor />
           </ChatContainerContent>
           <div className="absolute bottom-4 left-0 right-0 pb-20 pointer-events-none">

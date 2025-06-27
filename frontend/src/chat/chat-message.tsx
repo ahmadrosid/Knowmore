@@ -11,6 +11,7 @@ import { Copy, ThumbsDown, ThumbsUp } from "lucide-react"
 import { useState } from "react"
 import { type Message as MessageItem } from "@ai-sdk/react"
 import { ChatSource } from "./chat-source"
+import { Loader } from '@/components/ui/loader';
 
 function AssistantMessage({ message }: { message: MessageItem }) {
     const [liked, setLiked] = useState<boolean | null>(null)
@@ -68,7 +69,7 @@ function AssistantMessage({ message }: { message: MessageItem }) {
     );
 }
 
-export function ChatMessage({ messages }: { messages: MessageItem[] }) {
+export function ChatMessage({ messages, isLoading }: { messages: MessageItem[], isLoading: boolean }) {
 
     return (
         <div className="flex flex-col gap-8 mb-32">
@@ -79,13 +80,16 @@ export function ChatMessage({ messages }: { messages: MessageItem[] }) {
                             <MessageContent>{message.content}</MessageContent>
                         </Message>
                         <div className="px-2">
-                            <ChatSource filterTags={[]} searchResults={[]}/>
+                            <ChatSource filterTags={[]} searchResults={[]} />
                         </div>
                     </div>
                 ) : (
                     <AssistantMessage key={message.id} message={message} />
                 )
             ))}
+            {isLoading && <div className="px-4">
+                <Loader variant='typing' />
+            </div>}
         </div>
     )
 }
