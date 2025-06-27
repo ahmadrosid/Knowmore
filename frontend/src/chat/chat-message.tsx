@@ -22,7 +22,7 @@ function AssistantMessage({ message }: { message: MessageItem }) {
     }
 
     return (
-        <Message key={message.id} className="justify-start">
+        <Message className="justify-start">
             <div className="flex w-full flex-col gap-2">
                 <MessageContent markdown className="bg-transparent p-0">
                     {message.content}
@@ -70,14 +70,14 @@ function AssistantMessage({ message }: { message: MessageItem }) {
 export function ChatMessage({ messages }: { messages: MessageItem[] }) {
 
     return (
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-8 mb-32">
             {messages.map((message) => (
                 message.role === "user" ? (
                     <Message key={message.id} className="justify-end">
                         <MessageContent>{message.content}</MessageContent>
                     </Message>
                 ) : (
-                    <AssistantMessage message={message} />
+                    <AssistantMessage key={message.id} message={message} />
                 )
             ))}
         </div>
