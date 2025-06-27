@@ -11,7 +11,7 @@ import {
 import { ScrollButton } from "@/components/ui/scroll-button"
 import { Loader } from './components/ui/loader';
 
-function App() {
+export default function App() {
   const { messages, input, setInput, status, handleSubmit } = useChat({
     api: "/api/stream",
   });
@@ -65,5 +65,3 @@ function App() {
     </main >
   )
 }
-
-export default App
