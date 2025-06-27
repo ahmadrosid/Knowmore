@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Copy, ThumbsDown, ThumbsUp } from "lucide-react"
 import { useState } from "react"
 import { type Message as MessageItem } from "@ai-sdk/react"
+import { ChatSource } from "./chat-source"
 
 function AssistantMessage({ message }: { message: MessageItem }) {
     const [liked, setLiked] = useState<boolean | null>(null)
@@ -23,7 +24,7 @@ function AssistantMessage({ message }: { message: MessageItem }) {
 
     return (
         <Message className="justify-start">
-            <div className="flex w-full flex-col gap-2">
+            <div className="flex w-full flex-col gap-4">
                 <MessageContent markdown className="bg-transparent p-0">
                     {message.content}
                 </MessageContent>
@@ -73,9 +74,12 @@ export function ChatMessage({ messages }: { messages: MessageItem[] }) {
         <div className="flex flex-col gap-8 mb-32">
             {messages.map((message) => (
                 message.role === "user" ? (
-                    <Message key={message.id} className="justify-end">
-                        <MessageContent>{message.content}</MessageContent>
-                    </Message>
+                    <div key={message.id} className="space-y-2">
+                        <Message className="justify-start">
+                            <MessageContent>{message.content}</MessageContent>
+                        </Message>
+                        <ChatSource filterTags={[]} searchResults={[]}/>
+                    </div>
                 ) : (
                     <AssistantMessage key={message.id} message={message} />
                 )
