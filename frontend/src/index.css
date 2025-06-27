@@ -138,6 +138,16 @@
   display: none;
 }
 
+/* Hide scrollbar for StickToBottom component's internal div */
+.scrollbar-hidden > div {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hidden > div::-webkit-scrollbar {
+  display: none;
+}
+
 
 
   /* keyframes for loaders */
