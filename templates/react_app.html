@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    {% load static %}
+    <link rel="icon" type="image/svg+xml" href="{% static 'dist/vite.svg' %}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Knowmore</title>
+    
+    <!-- Vite build assets -->
+    {% if assets.css %}
+    <link rel="stylesheet" crossorigin href="{% static assets.css %}" />
+    {% endif %}
+  </head>
+  <body>
+    <div id="root"></div>
+    {% if assets.js %}
+    <script type="module" crossorigin src="{% static assets.js %}"></script>
+    {% else %}
+    <div style="padding: 20px; text-align: center; color: #666;">
+      <h2>Frontend not built</h2>
+      <p>Please run: <code>cd frontend && npm run build</code></p>
+    </div>
+    {% endif %}
+  </body>
+</html>

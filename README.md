@@ -35,8 +35,16 @@ npm install
 
 Run python server.
 
+For development (no streaming support):
 ```bash
 python manage.py runserver
+```
+
+For proper SSE streaming support (recommended):
+```bash
+python run_asgi.py
+# or
+daphne -b 127.0.0.1 -p 8000 Knowmore.asgi:application
 ```
 
 Using docker.

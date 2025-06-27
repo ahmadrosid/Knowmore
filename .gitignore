@@ -1,5 +1,6 @@
 node_modules/
 static/CACHE/
+static/dist/
 .venv/
 bun.lockb
 db.sqlite3

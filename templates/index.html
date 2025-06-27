@@ -18,18 +18,18 @@
                     />
                 <div class="flex justify-between items-end">
                     <div class="pl-2 pb-2">
-                        <button>
+                        <button type="button" class="model-btn" data-model="gpt-3.5-turbo">
                             <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-1.5 rounded-lg dark:bg-gray-600 dark:text-gray-300 dark:hover:bg-gray-800">
-                                GPT-3
+                                GPT-3.5
                             </span>
                         </button>
-                        <button>
+                        <button type="button" class="model-btn" data-model="gpt-4">
                             <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-1.5 rounded-lg dark:bg-gray-600 dark:text-gray-300 dark:hover:bg-gray-800">
                                 GPT-4
                             </span>
                         </button>
-                        <button>
-                            <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-1.5 rounded-lg dark:bg-gray-600 dark:text-gray-300 dark:hover:bg-gray-800">
+                        <button type="button" class="model-btn active" data-model="claude-3-5-sonnet-20240620">
+                            <span class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-1.5 rounded-lg dark:bg-blue-900 dark:text-blue-300">
                                 Claude
                             </span>
                         </button>
@@ -64,6 +64,7 @@
 {% block script %}
 <script>
     let eventSource;
+    let selectedModel = 'claude-3-5-sonnet-20240620';
     const sseData = document.getElementById('sse-data');
     const inputQuery = document.getElementById("query")
 
@@ -82,6 +83,26 @@
         return cookieValue;
     }
 
+    // Model selection functionality
+    document.querySelectorAll('.model-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            document.querySelectorAll('.model-btn').forEach(btn => {
+                btn.classList.remove('active');
+                const span = btn.querySelector('span');
+                span.className = 'bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-1.5 rounded-lg dark:bg-gray-600 dark:text-gray-300 dark:hover:bg-gray-800';
+            });
+            
+            // Add active class to clicked button
+            this.classList.add('active');
+            const span = this.querySelector('span');
+            span.className = 'bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-1.5 rounded-lg dark:bg-blue-900 dark:text-blue-300';
+            
+            // Update selected model
+            selectedModel = this.getAttribute('data-model');
+        });
+    });
+
     document.getElementById('search-form').addEventListener('submit', function(event) {
         event.preventDefault();
         const formData = new FormData(document.getElementById('search-form'));
@@ -91,7 +112,7 @@
 
     function startSSE(query) {
         const csrftoken = getCookie('csrftoken');
-        eventSource = new EventSource('/stream/'+ "?csrfmiddlewaretoken=" + csrftoken + "&query=" + query);
+        eventSource = new EventSource('/stream/'+ "?csrfmiddlewaretoken=" + csrftoken + "&query=" + query + "&model=" + selectedModel);
         let streamText = "";
         eventSource.onmessage = (event) => {
             if (event.data === "<END_STREAMING_SSE>") {

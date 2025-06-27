@@ -1,5 +1,10 @@
-css:
-	bun tailwindcss -i ./static/src/input.css -o ./static/src/output.css --watch
+.PHONY: build
 
-bundle-css:
-	bun tailwindcss -i ./static/src/input.css -o ./static/src/output.css --minify
+build: ui backend
+
+ui:
+	python3 build_frontend.py
+
+backend:
+	docker build . -t knowmore
+	docker run --env-file .env -p 7000:8000 knowmore
