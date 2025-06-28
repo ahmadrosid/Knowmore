@@ -59,8 +59,6 @@ pip install -r requirements.txt
 Install frontend dependencies:
 ```bash
 cd frontend && bun install
-# or
-cd frontend && npm install
 ```
 
 Run Python server:
