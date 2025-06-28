@@ -40,7 +40,7 @@ export function ChatInput({ input, setInput, handleSubmit, status }: ChatInputPr
           <Button
             variant="default"
             size="icon"
-            className={cn(input.length === 0 && "bg-primary/75" ,"h-8 w-8 rounded-full")}
+            className={cn(input.length === 0 && "opacity-65" ,"h-8 w-8 rounded-full transition-opacity duration-300")}
             onClick={handleSubmit}
           >
             {isLoading ? (

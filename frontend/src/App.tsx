@@ -1,15 +1,14 @@
+import { cn } from '@/lib/utils';
 import { ChatInput } from '@/chat/chat-input'
 import { useChat } from '@ai-sdk/react';
-import { ChatMessage } from './chat/chat-message';
-import { cn } from './lib/utils';
-
+import { ChatMessage } from '@/chat/chat-message';
+import { ChatHeader } from '@/chat/chat-header';
 import {
   ChatContainerContent,
   ChatContainerRoot,
   ChatContainerScrollAnchor,
 } from "@/components/ui/chat-container"
 import { ScrollButton } from "@/components/ui/scroll-button"
-import { ChatHeader } from './chat/chat-header';
 
 export default function App() {
   const { messages, input, setInput, status, handleSubmit } = useChat({
@@ -26,7 +25,7 @@ export default function App() {
       >
         {messages.length > 0 && <ChatHeader />}
         <ChatContainerRoot className={cn(
-          (messages.length > 0 || status === "submitted") ? "flex-1 w-full h-full opacity-100" : "hidden opacity-0",
+          (messages.length > 0 || status === "submitted") ? "flex-1 w-full" : "hidden",
           "scrollbar-hidden transition-opacity duration-500 ease-in-out"
         )}>
           <ChatContainerContent>

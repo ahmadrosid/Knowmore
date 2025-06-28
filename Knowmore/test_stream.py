@@ -1,4 +1,4 @@
-from django.http import StreamingHttpResponse
+from django.http import StreamingHttpResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 import time
@@ -12,9 +12,9 @@ def test_stream(request):
         
         # Send some test chunks
         test_words = ["Hello", " ", "world", "!", " ", "This", " ", "is", " ", "streaming", "."]
-        for word in test_words:
+        for i, word in enumerate(test_words):
             yield f'0:{json.dumps(word)}\n'
-            time.sleep(0.1)  # Small delay to see streaming effect
+            time.sleep(0.2)  # Longer delay to see streaming effect
         
         # Send finish messages
         yield f'e:{{"finishReason":"stop","usage":{{"promptTokens":10,"completionTokens":11}},"isContinued":false}}\n'
@@ -24,5 +24,19 @@ def test_stream(request):
     response['Cache-Control'] = 'no-cache, no-transform'
     response['X-Accel-Buffering'] = 'no'
     response['x-vercel-ai-data-stream'] = 'v1'
+    response['Connection'] = 'keep-alive'
+    return response
+
+@csrf_exempt 
+def simple_stream(request):
+    """Very basic SSE test"""
+    def generate():
+        for i in range(10):
+            yield f"data: chunk {i}\n\n"
+            time.sleep(0.0010)
+        yield "data: [DONE]\n\n"
+    
+    response = StreamingHttpResponse(generate(), content_type='text/event-stream')
+    response['Cache-Control'] = 'no-cache'
     response['Connection'] = 'keep-alive'
     return response
