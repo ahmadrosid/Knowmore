@@ -2,9 +2,10 @@
 
 **Knowmore** is a clone of Perplexity AI, it has a lot of thing missing features. The goals for this project is to learn django and RAG architecture.
 
-![demo](demo.png)
-
-![demo-output](demo-output.png)
+<div style="display: flex; gap: 20px; align-items: center;">
+  <img src="demo.png" alt="demo" width="48%" />
+  <img src="demo-output.png" alt="demo-output" width="48%" />
+</div>
 
 ## Requirements
 
