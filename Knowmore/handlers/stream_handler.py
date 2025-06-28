@@ -1,0 +1,35 @@
+import json
+import uuid
+from ..services.ai_provider import AIProviderFactory
+
+async def event_stream(messages, model):
+    """Handle AI provider streaming and format response chunks"""
+    provider = AIProviderFactory.get_provider(model)
+    message_id = f"msg-{uuid.uuid4().hex[:24]}"
+
+    async for chunk in provider.stream_response(messages, model):
+        yield chunk
+
+    # Add ending chunks
+    usage_data = {
+        "finishReason": "stop",
+        "usage": {
+            "promptTokens": 0,
+            "completionTokens": 0
+        },
+        "isContinued": False
+    }
+    yield f'e:{json.dumps(usage_data)}\n'
+    
+    finish_data = {
+        "finishReason": "stop",
+        "usage": {
+            "promptTokens": 0,
+            "completionTokens": 0
+        }
+    }
+    yield f'd:{json.dumps(finish_data)}\n'
+
+async def error_stream(message):
+    """Generate error stream response"""
+    yield f'error: {message}\n'
