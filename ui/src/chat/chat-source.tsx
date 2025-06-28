@@ -26,7 +26,7 @@ export function ChatSource({ filterTags, searchResults }: ChatSourceProps) {
         <div className="w-full bg-white backdrop-blur-sm rounded-lg border border-border px-4 pt-2 pb-1">
             {/* Header Section */}
             <div className="flex items-center justify-between mb-2">
-                <h2 className="text-lg font-semibold text-foreground">Sources Found</h2>
+                <h2 className="text-lg font-semibold text-foreground">Sources</h2>
                 <span className="text-sm text-muted-foreground">{searchResults.length} Results</span>
             </div>
 

@@ -16,14 +16,19 @@ async def event_stream(messages, model, enable_web_search=True):
     # Initialize search orchestrator
     search_orchestrator = SearchOrchestrator()
     
+    # Generate tool call ID and stream immediate search indicators
+    tool_call_id = f"search_{uuid.uuid4().hex[:8]}"
+    
+    # Stream search start indicator immediately
+    yield f'b:{json.dumps({"toolCallId": tool_call_id, "toolName": "web_search"})}\n'
+    
     # Generate search query and execute search
     search_query = await search_orchestrator.generate_search_query(messages)
     
     if search_query:
-        # Generate tool call ID and stream search indicators
-        tool_call_id = f"search_{uuid.uuid4().hex[:8]}"
-        async for chunk in _stream_search_indicators(tool_call_id, search_query):
-            yield chunk
+        # Stream search query and execution indicators
+        yield f'c:{json.dumps({"toolCallId": tool_call_id, "argsTextDelta": search_query})}\n'
+        yield f'9:{json.dumps({"toolCallId": tool_call_id, "toolName": "web_search", "args": {"query": search_query}})}\n'
         
         # Execute search
         search_results = await search_orchestrator.execute_search(search_query)
@@ -44,11 +49,6 @@ async def event_stream(messages, model, enable_web_search=True):
         yield chunk
 
 
-async def _stream_search_indicators(tool_call_id: str, search_query: str):
-    """Stream search loading indicators using Vercel AI SDK protocol"""
-    yield f'b:{json.dumps({"toolCallId": tool_call_id, "toolName": "web_search"})}\n'
-    yield f'c:{json.dumps({"toolCallId": tool_call_id, "argsTextDelta": search_query})}\n'
-    yield f'9:{json.dumps({"toolCallId": tool_call_id, "toolName": "web_search", "args": {"query": search_query}})}\n'
 
 
 async def error_stream(message):

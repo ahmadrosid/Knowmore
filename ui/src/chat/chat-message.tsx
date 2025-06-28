@@ -29,7 +29,6 @@ function extractSearchQuery(args: any): string {
 
 // Helper function to transform web search results
 function transformSearchResults(results: any): any[] {
-    // Ensure results is an array before mapping
     if (!Array.isArray(results)) {
         console.warn('transformSearchResults: Expected array but received:', typeof results, results);
         return [];
@@ -55,10 +54,8 @@ function AssistantMessage({ message }: { message: MessageItem }) {
         setTimeout(() => setCopied(false), 2000)
     }
 
-    // Process message parts to render content and tool invocations
     const renderedContent = useMemo(() => {
         if (!message.parts || message.parts.length === 0) {
-            // Fallback to content if parts are not available
             return (
                 <MessageContent markdown className="bg-transparent p-0">
                     {message.content}
@@ -80,8 +77,8 @@ function AssistantMessage({ message }: { message: MessageItem }) {
                     const { toolName, state, args } = invocation;
 
                     if (toolName === 'web_search') {
-                        if (state === 'call') {
-                            // Show loading state
+                        // Show loading state immediately when web_search tool is detected without results
+                        if (!invocation.result) {
                             return (
                                 <div key={partIndex} className="mb-4">
                                     <ChatSourcePlaceholder />
@@ -89,7 +86,7 @@ function AssistantMessage({ message }: { message: MessageItem }) {
                             );
                         }
                         
-                        if (state === 'result') {
+                        if (state === 'result' && invocation.result) {
                             // Transform and display results with additional safety checks
                             const resultsArray = invocation.result?.results || invocation.result || [];
                             const searchResults = transformSearchResults(resultsArray);
@@ -172,9 +169,16 @@ export function ChatMessage({ messages, isLoading }: { messages: MessageItem[], 
                     <AssistantMessage key={message.id} message={message} />
                 )
             ))}
-            {isLoading && <div className="px-4">
-                <Loader variant='typing' />
-            </div>}
+            {isLoading && (
+                <div>
+                    <div className="mb-4">
+                        <ChatSourcePlaceholder />
+                    </div>
+                    <div className="px-4">
+                        <Loader variant='typing' />
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
