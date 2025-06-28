@@ -4,6 +4,8 @@
 
 ![demo](demo.png)
 
+![demo-output](demo-output.png)
+
 ## Requirements
 
 - Python >= 3.10
