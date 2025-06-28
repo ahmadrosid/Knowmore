@@ -15,11 +15,11 @@ def index(request):
     assets = get_vite_assets()
     return render(request, "react_app.html", {"assets": assets})
 
-async def event_stream(question, model):
+async def event_stream(messages, model):
     provider = AIProviderFactory.get_provider(model)
     message_id = f"msg-{uuid.uuid4().hex[:24]}"
 
-    async for chunk in provider.stream_response(question, model):
+    async for chunk in provider.stream_response(messages, model):
         yield chunk
 
     # Add ending chunks
@@ -53,19 +53,34 @@ async def sse_stream(request):
         messages = body.get('messages', [])
         model = body.get('model', 'claude-3-5-sonnet-20240620')
 
-        # Extract the last user message
-        last_message = ''
-        for msg in reversed(messages):
-            if msg.get('role') == 'user':
-                last_message = msg.get('content', '')
-                break
-
-        if not last_message:
+        if not messages:
             async def error_stream():
-                yield f'error: No user message found\n'
+                yield f'error: No messages found\n'
             return SSEResponse(error_stream(), content_type='text/event-stream', status=400)
+
+        # Format messages to only include role and content (ignore parts)
+        formatted_messages = []
+        for msg in messages:
+            if 'parts' in msg:
+                # Extract text content from parts
+                content = ""
+                for part in msg['parts']:
+                    if isinstance(part, dict) and 'text' in part:
+                        content += part['text']
+                    elif isinstance(part, str):
+                        content += part
+                formatted_messages.append({
+                    "role": msg['role'],
+                    "content": content
+                })
+            else:
+                # Message already in correct format
+                formatted_messages.append({
+                    "role": msg['role'],
+                    "content": msg.get('content', '')
+                })
     
-        return StreamingHttpResponse(event_stream(last_message, model), content_type='text/event-stream')
+        return StreamingHttpResponse(event_stream(formatted_messages, model), content_type='text/event-stream')
     except json.JSONDecodeError:
         async def error_stream():
             yield f'error: Invalid JSON\n'

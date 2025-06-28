@@ -9,10 +9,10 @@ class OpenAIService:
             api_key=os.environ.get("OPENAI_API_KEY"),
         )
 
-    async def stream_response(self, query, model="gpt-3.5-turbo"):
+    async def stream_response(self, messages, model="gpt-3.5-turbo"):
         stream = await self.client.chat.completions.create(
             model=model,
-            messages=[{"role": "user", "content": query}],
+            messages=messages,
             stream=True,
             max_tokens=1024,
         )
