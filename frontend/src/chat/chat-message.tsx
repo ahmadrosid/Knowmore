@@ -39,7 +39,7 @@ function transformSearchResults(results: any): any[] {
         id: `result-${index}`,
         title: result.title || 'Untitled',
         url: result.url || '',
-        preview: result.page_age || 'No preview available',
+        preview: result.description || result.snippet || 'No preview available',
         favicon: result.url ? new URL(result.url).hostname.charAt(0).toUpperCase() : '?',
         domain: result.url ? new URL(result.url).hostname : 'unknown',
     }));

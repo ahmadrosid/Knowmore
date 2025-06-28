@@ -52,7 +52,8 @@ export function ChatSource({ filterTags, searchResults }: ChatSourceProps) {
                         searchResults.map((result) => (
                             <Card
                                 key={result.id}
-                                className="w-[340px] bg-accent shadow-none py-3"
+                                className="w-[340px] bg-accent shadow-none py-3 cursor-pointer hover:bg-accent/80 transition-colors"
+                                onClick={() => window.open(result.url, '_blank', 'noopener,noreferrer')}
                             >
                                 <CardContent className="p-0">
                                     <div className="flex px-2">
