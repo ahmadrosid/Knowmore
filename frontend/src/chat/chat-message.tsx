@@ -72,7 +72,7 @@ function AssistantMessage({ message }: { message: MessageItem }) {
 export function ChatMessage({ messages, isLoading }: { messages: MessageItem[], isLoading: boolean }) {
 
     return (
-        <div className="flex flex-col gap-8 mb-32">
+        <div className="flex flex-col gap-8">
             {messages.map((message) => (
                 message.role === "user" ? (
                     <div key={message.id} className="space-y-2">

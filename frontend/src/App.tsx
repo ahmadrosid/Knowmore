@@ -28,7 +28,7 @@ export default function App() {
           (messages.length > 0 || status === "submitted") ? "flex-1 w-full" : "hidden",
           "scrollbar-hidden transition-opacity duration-500 ease-in-out"
         )}>
-          <ChatContainerContent>
+          <ChatContainerContent className={messages.length > 0 ? "mb-32" : ""}>
             <ChatMessage messages={messages} isLoading={status === "submitted"} />
             <ChatContainerScrollAnchor />
           </ChatContainerContent>
