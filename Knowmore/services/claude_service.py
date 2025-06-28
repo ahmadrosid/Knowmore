@@ -1,12 +1,16 @@
-import os
 import json
 import uuid
+import environ
 from anthropic import AsyncAnthropic
+
+env = environ.Env(
+    ANTHROPIC_API_KEY=str,
+)
 
 class ClaudeService:
     def __init__(self):
         self.client = AsyncAnthropic(
-            api_key=os.environ.get("ANTHROPIC_API_KEY"),
+            api_key=env("ANTHROPIC_API_KEY"),
         )
 
     def _supports_web_search(self, model):

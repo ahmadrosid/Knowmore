@@ -1,16 +1,19 @@
-import os
 import json
 import requests
+import environ
 from typing import Dict, Any, List
 from ..base.tool import BaseTool
+
+env = environ.Env(
+    FIRE_CRAWL_API_TOKEN=str,
+)
 
 class FirecrawlWebSearch(BaseTool):
     """Firecrawl web search tool for OpenAI and other models"""
     
     def __init__(self):
         super().__init__()
-        self.api_key = os.environ.get("FIRE_CRAWL_API_TOKEN")
-        print('firecrawl:api_key', self.api_key)
+        self.api_key = env("FIRE_CRAWL_API_TOKEN")
         self.base_url = "https://api.firecrawl.dev/v1"
     
     def get_name(self) -> str:

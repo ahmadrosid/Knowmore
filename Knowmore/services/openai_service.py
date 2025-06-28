@@ -1,7 +1,11 @@
-import os
 import json
+import environ
 from openai import AsyncOpenAI
 from .tools.provider_tools import ProviderTools
+
+env = environ.Env(
+    OPENAI_API_KEY=str,
+)
 
 class OpenAIService:
     """
@@ -21,7 +25,7 @@ class OpenAIService:
     
     def __init__(self):
         self.client = AsyncOpenAI(
-            api_key=os.environ.get("OPENAI_API_KEY"),
+            api_key=env("OPENAI_API_KEY"),
         )
 
     async def stream_response(self, messages, model="gpt-3.5-turbo", enable_web_search=False):
