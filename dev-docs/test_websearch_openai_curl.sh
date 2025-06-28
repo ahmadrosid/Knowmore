@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Test web search with Claude model
-echo "Testing web search with Claude..."
+# Test web search with OpenAI model
+echo "Testing web search with OpenAI..."
 echo "Expected format: <identifier>:<JSON>"
 echo "-----------------------------------"
 
@@ -12,10 +12,10 @@ curl -X POST http://localhost:7000/api/stream \
     "messages": [
       {
         "role": "user",
-        "content": "What are the latest AI developments in 2025?"
+        "content": "What is the current weather in Jakarta?"
       }
     ],
-    "model": "claude-3-5-sonnet-latest",
+    "model": "gpt-4o",
     "enable_web_search": true
   }' \
   -N

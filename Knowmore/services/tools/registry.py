@@ -46,11 +46,9 @@ class ToolRegistry:
         
         elif provider.lower() in ["openai", "gpt"]:
             # OpenAI models use Firecrawl
-            firecrawl_api_key = config.get("firecrawl_api_key")
-            if firecrawl_api_key:
-                firecrawl_search = self.get_tool("firecrawl_web_search", api_key=firecrawl_api_key)
-                if firecrawl_search:
-                    tools.append(firecrawl_search)
+            firecrawl_search = self.get_tool("firecrawl_web_search")
+            if firecrawl_search:
+                tools.append(firecrawl_search)
         
         return tools
     

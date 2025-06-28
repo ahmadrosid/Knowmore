@@ -8,6 +8,7 @@ from .utils import get_vite_assets
 from .handlers.stream_handler import event_stream, error_stream
 from .handlers.message_processor import format_messages
 from .services.ai_provider import AIProviderFactory
+from .services.tools.provider_tools import ProviderTools
 
 def index(request):
     assets = get_vite_assets()
@@ -27,9 +28,9 @@ async def sse_stream(request):
         if not messages:
             return StreamingHttpResponse(error_stream('No messages found'), content_type='text/event-stream', status=400)
 
-        formatted_messages = format_messages(messages)
+        input_messages = format_messages(messages)
         response = StreamingHttpResponse(
-            event_stream(formatted_messages, model, enable_web_search=enable_web_search), 
+            event_stream(input_messages, model, enable_web_search=enable_web_search), 
             content_type='text/event-stream'
         )
         response['x-vercel-ai-data-stream'] = 'v1'
@@ -92,8 +93,8 @@ async def test_tools(request):
         tool_config = body.get('config', {})
         
         # Get available tools for the model
-        available_tools = AIProviderFactory.get_available_tools(model, **tool_config)
-        tool_definitions = AIProviderFactory.get_tool_definitions(model, **tool_config)
+        available_tools = ProviderTools.get_available_tools(model, **tool_config)
+        tool_definitions = ProviderTools.get_tool_definitions(model, **tool_config)
         
         # Test tool execution (for Firecrawl only, Anthropic is automatic)
         tool_results = []
