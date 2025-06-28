@@ -13,7 +13,9 @@
 **Environment Variables**:
 
 ```bash
-ANTHROPIC_API_KEY=sk-ant-api...
+ANTHROPIC_API_KEY=
+OPENAI_API_KEY=
+FIRE_CRAWL_API_TOKEN=
 ```
 
 ## Integration
