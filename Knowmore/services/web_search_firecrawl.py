@@ -2,15 +2,12 @@ import json
 import requests
 import environ
 from typing import Dict, Any, List
-from ..base.tool import BaseTool
 
 env = environ.Env(
     FIRE_CRAWL_API_TOKEN=str,
 )
 
-class FirecrawlWebSearch(BaseTool):
-    """Firecrawl web search tool for OpenAI and other models"""
-    
+class FirecrawlWebSearch:    
     def __init__(self):
         super().__init__()
         self.api_key = env("FIRE_CRAWL_API_TOKEN")
