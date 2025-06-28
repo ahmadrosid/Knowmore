@@ -4,12 +4,13 @@
 
 ![demo](demo.png)
 
-## Requirement
+## Requirements
 
-- Python >= 3.9 
-- Nodejs/bun
+- Python >= 3.10
+- Node.js/Bun
+- Docker (optional)
 
-**ENV**:
+**Environment Variables**:
 
 ```bash
 ANTHROPIC_API_KEY=sk-ant-api...
@@ -17,23 +18,52 @@ ANTHROPIC_API_KEY=sk-ant-api...
 
 ## Integration
 
-For know it integrate with Anthropic AI. Soon will be adding openai gpt4 and other LLM.
+For now it integrates with Anthropic AI. Soon will be adding OpenAI GPT-4 and other LLMs.
 
-## Run
+## Quick Start
 
-Install python packages.
+### Using Make (Recommended)
 
+Build and run the full application:
+```bash
+make dev
+```
+
+This will:
+- Build the frontend using `./build_frontend.sh`
+- Build the Docker image
+- Run the backend on port 7000
+
+Individual commands:
+```bash
+# Build frontend and backend
+make build
+
+# Serve frontend only (for development)
+make serve-ui
+
+# Build Docker image only
+make backend
+
+# Run backend container only
+make run-backend
+```
+
+### Manual Setup
+
+Install Python packages:
 ```bash
 pip install -r requirements.txt
 ```
 
-Install npm dependencies.
-
+Install frontend dependencies:
 ```bash
-npm install
+cd frontend && bun install
+# or
+cd frontend && npm install
 ```
 
-Run python server.
+Run Python server:
 
 For development (no streaming support):
 ```bash
@@ -47,23 +77,19 @@ python run_asgi.py
 daphne -b 127.0.0.1 -p 8000 Knowmore.asgi:application
 ```
 
-Using docker.
+### Using Docker
 
-Build docker image.
-
+Build Docker image:
 ```bash
-docker build . -t knowmore-app
+docker build . -t knowmore
 ```
 
-Ru docker image
-
+Run Docker container:
 ```bash
-docker run --env-file .env -p 7000:8000 knowmore-app:latest
+docker run --env-file .env -p 7000:8000 knowmore
 ```
 
-Now visit.
-
-http://localhost:7000
+Access the application at: http://localhost:7000
 
 ## Credits
 
