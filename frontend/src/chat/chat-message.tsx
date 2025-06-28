@@ -77,7 +77,6 @@ function AssistantMessage({ message }: { message: MessageItem }) {
 
                 case 'tool-invocation': {
                     const invocation = part.toolInvocation as any;
-                    console.log({ invocation });
                     const { toolName, state, args } = invocation;
 
                     if (toolName === 'web_search') {
