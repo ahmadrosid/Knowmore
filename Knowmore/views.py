@@ -8,7 +8,6 @@ from .utils import get_vite_assets
 from .handlers.stream_handler import event_stream, error_stream
 from .handlers.message_processor import format_messages
 from .services.ai_provider import AIProviderFactory
-from .services.tools.provider_tools import ProviderTools
 
 def index(request):
     assets = get_vite_assets()
@@ -81,52 +80,6 @@ def get_models(request):
     
     return JsonResponse({'models': models})
 
-async def test_tools(request):
-    """Test endpoint for experimenting with tools"""
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Method not allowed'}, status=405)
-    
-    try:
-        body = json.loads(request.body)
-        model = body.get('model', 'claude-3-5-sonnet-20240620')
-        query = body.get('query', 'What is the weather today?')
-        tool_config = body.get('config', {})
-        
-        # Get available tools for the model
-        available_tools = ProviderTools.get_available_tools(model, **tool_config)
-        tool_definitions = ProviderTools.get_tool_definitions(model, **tool_config)
-        
-        # Test tool execution (for Firecrawl only, Anthropic is automatic)
-        tool_results = []
-        if model.startswith('gpt') and available_tools:
-            for tool in available_tools:
-                if hasattr(tool, 'execute'):
-                    try:
-                        result = await tool.execute(query=query, limit=3)
-                        tool_results.append({
-                            'tool': tool.name,
-                            'result': result
-                        })
-                    except Exception as e:
-                        tool_results.append({
-                            'tool': tool.name,
-                            'error': str(e)
-                        })
-        
-        return JsonResponse({
-            'success': True,
-            'model': model,
-            'query': query,
-            'available_tools': [tool.name for tool in available_tools],
-            'tool_definitions': tool_definitions,
-            'tool_results': tool_results,
-            'config': tool_config
-        })
-        
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'Invalid JSON'}, status=400)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
 
 def get_manifest(request):
     """Read Vite manifest to get the correct asset paths"""
