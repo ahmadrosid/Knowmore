@@ -3,3 +3,4 @@ openai
 Django==5.2.3
 daphne==4.2.0
 django-compressor==4.5.1
+requests
