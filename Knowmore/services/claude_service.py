@@ -7,22 +7,12 @@ env = environ.Env(
 )
 
 class ClaudeService:
-    """
-    Simplified Claude service for streaming chat completions without tool support.
-    
-    Vercel AI SDK Stream Protocol Identifiers:
-    - '0:' - Regular text content from the model
-    - 'd:' - Completion finished (finishReason)
-    - '3:' - Error occurred (error)
-    """
-    
     def __init__(self):
         self.client = AsyncAnthropic(
             api_key=env("ANTHROPIC_API_KEY"),
         )
 
     async def stream_response(self, messages, model="claude-3-5-sonnet-20240620", enable_web_search=False):
-        """Stream chat completion response without tool support"""
         stream_params = {
             "max_tokens": 1024,
             "messages": messages,

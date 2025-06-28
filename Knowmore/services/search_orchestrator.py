@@ -1,7 +1,7 @@
 import json
 from typing import Optional, Dict, Any, List
 from .claude_service import ClaudeService
-from .tools.search.web_firecrawl import FirecrawlWebSearch
+from .web_search_firecrawl import FirecrawlWebSearch
 
 
 class SearchOrchestrator:
@@ -63,14 +63,14 @@ Search query:"""
             if result.get("success"):
                 search_results = result.get("results", [])
                 return {
-                    "results": search_results,  # Changed from "searchResults" to "results"
+                    "results": search_results,
                     "filterTags": [],
                     "summary": f"Found {len(search_results)} relevant sources about {query}",
                     "success": True
                 }
             else:
                 return {
-                    "results": [],  # Changed from "searchResults" to "results"
+                    "results": [],
                     "filterTags": [],
                     "summary": f"Search failed: {result.get('error', 'Unknown error')}",
                     "success": False
@@ -78,7 +78,7 @@ Search query:"""
                 
         except Exception as e:
             return {
-                "results": [],  # Changed from "searchResults" to "results"
+                "results": [],
                 "filterTags": [],
                 "summary": f"Search error: {str(e)}",
                 "success": False
@@ -111,7 +111,6 @@ Search query:"""
         
         search_context = "\n".join(context_parts)
         
-        # Create enhanced messages
         enhanced_messages = []
         
         # Copy all messages except the last user message

@@ -7,17 +7,6 @@ env = environ.Env(
 )
 
 class OpenAIService:
-    """
-    Simplified OpenAI service for streaming chat completions without tool support.
-    
-    Vercel AI SDK Stream Protocol Identifiers:
-    - '0:' - Regular text content from the model
-    - 'd:' - Completion finished (finishReason)
-    - '3:' - Error occurred (error)
-    
-    Note: Set HTTP header 'x-vercel-ai-data-stream: v1' when using this service.
-    """
-    
     def __init__(self):
         self.client = AsyncOpenAI(
             api_key=env("OPENAI_API_KEY"),
