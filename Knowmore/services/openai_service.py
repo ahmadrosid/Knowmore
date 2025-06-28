@@ -28,9 +28,10 @@ class OpenAIService:
             api_key=env("OPENAI_API_KEY"),
         )
 
-    async def stream_response(self, messages, model="gpt-3.5-turbo", enable_web_search=False):
+    async def stream_response(self, messages, model="gpt-3.5-turbo", enable_web_search=False, max_tool_calls=3):
         tools = None
         tool_instances = {}
+        tool_call_count = 0
         
         # Get tools if web search is enabled
         if enable_web_search:
@@ -118,7 +119,8 @@ class OpenAIService:
                                     yield f'9:{json.dumps({"toolCallId": tool_data["id"], "toolName": tool_data["function_name"], "args": {}})}\n'
                     
                     # Execute any pending tool calls
-                    if choice.finish_reason == "tool_calls":
+                    if choice.finish_reason == "tool_calls" and tool_call_count < max_tool_calls:
+                        tool_call_count += 1
                         tool_results = []
                         for tool_call_index, tool_data in pending_tool_calls.items():
                             function_name = tool_data["function_name"]
@@ -189,6 +191,9 @@ class OpenAIService:
                         if tool_results:
                             async for follow_up_chunk in self._handle_followup_response(messages, tool_results, model, tools):
                                 yield follow_up_chunk
+                    elif choice.finish_reason == "tool_calls" and tool_call_count >= max_tool_calls:
+                        # Max tool calls reached, send message to user
+                        yield f'0:{json.dumps("Maximum tool call limit reached. Stopping tool execution.")}\n'
                     
                     yield f'd:{json.dumps({"finishReason": choice.finish_reason})}\n'
         except Exception as e:
@@ -231,6 +236,7 @@ class OpenAIService:
             
             # Make follow-up call to get final response
             # Note: Do not include tools in follow-up to prevent recursive tool calls
+            # Limit to maximum 3 tool calls to prevent infinite loops
             stream_params = {
                 "model": model,
                 "messages": followup_messages,
