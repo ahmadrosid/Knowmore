@@ -3,20 +3,20 @@
 # Build script for the React frontend
 
 PROJECT_ROOT="$(cd "$(dirname "$0")" && pwd)"
-FRONTEND_DIR="$PROJECT_ROOT/frontend"
+UI_DIR="$PROJECT_ROOT/ui"
 
-echo "🔨 Building React frontend for Django..."
+echo "🔨 Building React ui for Django..."
 
-# Check if frontend directory exists
-if [ ! -d "$FRONTEND_DIR" ]; then
+# Check if ui directory exists
+if [ ! -d "$UI_DIR" ]; then
     echo "❌ Frontend directory not found!"
     exit 1
 fi
 
 # Check if node_modules exists
-if [ ! -d "$FRONTEND_DIR/node_modules" ]; then
+if [ ! -d "$UI_DIR/node_modules" ]; then
     echo "📦 Installing dependencies..."
-    cd "$FRONTEND_DIR" && npm install
+    cd "$UI_DIR" && npm install
     if [ $? -ne 0 ]; then
         echo "❌ Error running: npm install"
         exit 1
@@ -26,7 +26,7 @@ fi
 
 # Build the frontend
 echo "⚡ Building with Vite..."
-cd "$FRONTEND_DIR" && npm run build
+cd "$UI_DIR" && npm run build
 if [ $? -ne 0 ]; then
     echo "❌ Error running: npm run build"
     exit 1

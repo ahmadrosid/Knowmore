@@ -5,10 +5,10 @@ build: ui backend
 dev: ui backend run-backend
 
 ui:
-	./build_frontend.sh
+	./build_ui.sh
 
 serve-ui:
-	cd frontend && bun run dev
+	cd ui && bun run dev
 
 backend:
 	docker build . -t knowmore
