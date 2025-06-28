@@ -14,7 +14,6 @@ import { ChatSource } from "./chat-source"
 import { ChatSourcePlaceholder } from "@/components/chat-source-placeholder"
 import { Loader } from '@/components/ui/loader';
 
-// Helper function to extract query from tool args
 function extractSearchQuery(args: any): string {
     if (typeof args === 'string') {
         try {
@@ -27,7 +26,6 @@ function extractSearchQuery(args: any): string {
     return args?.query || '';
 }
 
-// Helper function to transform web search results
 function transformSearchResults(results: any): any[] {
     if (!Array.isArray(results)) {
         console.warn('transformSearchResults: Expected array but received:', typeof results, results);
