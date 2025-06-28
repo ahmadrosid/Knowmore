@@ -11,18 +11,15 @@ from .services.ai_provider import AIProviderFactory
 from .utils import get_vite_assets
 from .sse import SSEResponse
 
-def gen_message(msg):
-    return f'data: {msg}\n\n'
-
 def index(request):
     assets = get_vite_assets()
     return render(request, "react_app.html", {"assets": assets})
 
-def event_stream(question, model):
+async def event_stream(question, model):
     provider = AIProviderFactory.get_provider(model)
     message_id = f"msg-{uuid.uuid4().hex[:24]}"
 
-    for chunk in provider.stream_response(question, model):
+    async for chunk in provider.stream_response(question, model):
         yield chunk
 
     # Add ending chunks
