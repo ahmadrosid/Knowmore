@@ -226,15 +226,13 @@ class OpenAIService:
                 })
             
             # Make follow-up call to get final response
+            # Note: Do not include tools in follow-up to prevent recursive tool calls
             stream_params = {
                 "model": model,
                 "messages": followup_messages,
                 "stream": True,
                 "max_tokens": 1024,
             }
-            
-            if tools:
-                stream_params["tools"] = tools
             
             follow_up_stream = await self.client.chat.completions.create(**stream_params)
             

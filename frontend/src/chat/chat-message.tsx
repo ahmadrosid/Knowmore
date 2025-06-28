@@ -28,7 +28,13 @@ function extractSearchQuery(args: any): string {
 }
 
 // Helper function to transform web search results
-function transformSearchResults(results: any[]): any[] {
+function transformSearchResults(results: any): any[] {
+    // Ensure results is an array before mapping
+    if (!Array.isArray(results)) {
+        console.warn('transformSearchResults: Expected array but received:', typeof results, results);
+        return [];
+    }
+    
     return results.map((result, index) => ({
         id: `result-${index}`,
         title: result.title || 'Untitled',
@@ -84,9 +90,10 @@ function AssistantMessage({ message }: { message: MessageItem }) {
                             );
                         }
                         
-                        if (state === 'result' && invocation.result) {
-                            // Transform and display results
-                            const searchResults = transformSearchResults(invocation.result);
+                        if (state === 'result') {
+                            // Transform and display results with additional safety checks
+                            const resultsArray = invocation.result?.results || invocation.result || [];
+                            const searchResults = transformSearchResults(resultsArray);
                             const query = extractSearchQuery(args);
                             const filterTags = query ? [query] : [];
                             
