@@ -28,7 +28,7 @@ export default function App() {
       model: selectedModel,
       enable_web_search: true,
     },
-    maxSteps: 5, // Enable multi-step for tool calls
+    // maxSteps removed - search is handled server-side in stream handler
   });
 
   return (

@@ -87,11 +87,11 @@ Existing Components (No Changes Needed)
 ## TODO List
 
 ### 1. Enhanced Stream Handler
-- [ ] Update `Knowmore/handlers/stream_handler.py`
-- [ ] Add LLM-based query extraction (call LLM to generate search keywords)
-- [ ] Add direct Firecrawl search execution
-- [ ] Stream search loading indicators using Vercel AI SDK protocol
-- [ ] Inject search results into AI context
+- [x] Update `Knowmore/handlers/stream_handler.py`
+- [x] Add LLM-based query extraction (call LLM to generate search keywords)
+- [x] Add direct Firecrawl search execution
+- [x] Stream search loading indicators using Vercel AI SDK protocol
+- [x] Inject search results into AI context
 
 ### 2. Simplify AI Providers
 - [ ] Remove tool orchestration from `Knowmore/services/openai_service.py`
