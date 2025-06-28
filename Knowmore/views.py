@@ -43,38 +43,11 @@ def get_models(request):
     
     # Transform into a flat list with provider info
     models = []
-    for provider, model_ids in models_dict.items():
-        for model_id in model_ids:
-            # Generate a display name from the model ID
-            if model_id.startswith('claude'):
-                if 'opus' in model_id:
-                    name = 'Claude Opus 4' if '4-20250514' in model_id else 'Claude Opus'
-                elif 'sonnet' in model_id:
-                    if '4-20250514' in model_id:
-                        name = 'Claude Sonnet 4'
-                    elif '3-7' in model_id:
-                        name = 'Claude Sonnet 3.7'
-                    else:
-                        name = 'Claude Sonnet 3.5'
-                elif 'haiku' in model_id:
-                    name = 'Claude Haiku 3.5'
-                else:
-                    name = model_id
-            elif model_id.startswith('gpt'):
-                if 'gpt-4o' in model_id:
-                    name = 'GPT-4o'
-                elif 'gpt-4.1' in model_id:
-                    name = 'GPT-4.1'
-                else:
-                    name = model_id
-            elif model_id.startswith('o4'):
-                name = 'O4 Mini'
-            else:
-                name = model_id
-                
+    for provider, model_list in models_dict.items():
+        for model in model_list:
             models.append({
-                'id': model_id,
-                'name': name,
+                'id': model['id'],
+                'name': model['name'],
                 'provider': provider
             })
     

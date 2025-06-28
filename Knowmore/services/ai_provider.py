@@ -7,7 +7,7 @@ class AIProviderFactory:
     def get_provider(model_name):
         if model_name.startswith('claude'):
             return ClaudeService()
-        elif model_name.startswith('gpt'):
+        elif model_name.startswith('gpt') or model_name.startswith('o4'):
             return OpenAIService()
         else:
             # Default to Claude
@@ -17,16 +17,16 @@ class AIProviderFactory:
     def get_supported_models():
         return {
             'claude': [
-                'claude-opus-4-20250514',
-                'claude-sonnet-4-20250514',
-                'claude-3-7-sonnet-20250219',
-                'claude-3-5-sonnet-latest',
-                'claude-3-5-haiku-latest',
-                'claude-3-5-sonnet-20240620'
+                {'id': 'claude-opus-4-20250514', 'name': 'Claude Opus 4'},
+                {'id': 'claude-sonnet-4-20250514', 'name': 'Claude Sonnet 4'},
+                {'id': 'claude-3-7-sonnet-20250219', 'name': 'Claude Sonnet 3.7'},
+                {'id': 'claude-3-5-sonnet-latest', 'name': 'Claude Sonnet 3.5'},
+                {'id': 'claude-3-5-haiku-latest', 'name': 'Claude Haiku 3.5'},
+                {'id': 'claude-3-5-sonnet-20240620', 'name': 'Claude Sonnet 3.5'}
             ],
             'openai': [
-                'gpt-4o-2024-08-06',
-                'o4-mini-2025-04-16',
-                'gpt-4.1-2025-04-14'
+                {'id': 'gpt-4o-2024-08-06', 'name': 'GPT-4o'},
+                {'id': 'o4-mini-2025-04-16', 'name': 'O4 Mini'},
+                {'id': 'gpt-4.1-2025-04-14', 'name': 'GPT-4.1'}
             ]
         }
