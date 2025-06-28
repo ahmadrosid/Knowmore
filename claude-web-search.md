@@ -1,16 +1,20 @@
-# Anthropic Web search tool
+# Web search tool
 
 The web search tool gives Claude direct access to real-time web content, allowing it to answer questions with up-to-date information beyond its knowledge cutoff. Claude automatically cites sources from search results as part of its answer.
+
+Please reach out through our feedback form to share your experience with the web search tool.
 
 ## Supported models
 
 Web search is available on:
 
-- Claude Opus 4 (`claude-opus-4-20250514`)
-- Claude Sonnet 4 (`claude-sonnet-4-20250514`)
-- Claude Sonnet 3.7 (`claude-3-7-sonnet-20250219`)
-- Claude Sonnet 3.5 (new) (`claude-3-5-sonnet-latest`)
-- Claude Haiku 3.5 (`claude-3-5-haiku-latest`)
+- Claude Opus 4 ( `claude-opus-4-20250514`)
+- Claude Sonnet 4 ( `claude-sonnet-4-20250514`)
+- Claude Sonnet 3.7 ( `claude-3-7-sonnet-20250219`)
+- Claude Sonnet 3.5 (new) ( `claude-3-5-sonnet-latest`)
+- Claude Haiku 3.5 ( `claude-3-5-haiku-latest`)
+
+## How web search works
 
 When you add the web search tool to your API request:
 
@@ -18,15 +22,63 @@ When you add the web search tool to your API request:
 2. The API executes the searches and provides Claude with the results. This process may repeat multiple times throughout a single request.
 3. At the end of its turn, Claude provides a final response with cited sources.
 
-Your organization’s administrator must enable web search in [Console](https://console.anthropic.com/settings/privacy).
+## How to use web search
+
+Your organization’s administrator must enable web search in Console.
 
 Provide the web search tool in your API request:
+
+```py
+import anthropic
+
+client = anthropic.Anthropic()
+
+response = client.messages.create(
+    model="claude-opus-4-20250514",
+    max_tokens=1024,
+    messages=[
+        {
+            "role": "user",
+            "content": "How do I update a web app to TypeScript 5.5?"
+        }
+    ],
+    tools=[{
+        "type": "web_search_20250305",
+        "name": "web_search",
+        "max_uses": 5
+    }]
+)
+print(response)
+```
 
 ### Tool definition
 
 The web search tool supports the following parameters:
 
-JSON
+```json
+{
+  "type": "web_search_20250305",
+  "name": "web_search",
+
+  // Optional: Limit the number of searches per request
+  "max_uses": 5,
+
+  // Optional: Only include results from these domains
+  "allowed_domains": ["example.com", "trusteddomain.org"],
+
+  // Optional: Never include results from these domains
+  "blocked_domains": ["untrustedsource.com"],
+
+  // Optional: Localize search results
+  "user_location": {
+    "type": "approximate",
+    "city": "San Francisco",
+    "region": "California",
+    "country": "US",
+    "timezone": "America/Los_Angeles"
+  }
+}
+```
 
 #### Max uses
 
@@ -37,8 +89,8 @@ The `max_uses` parameter limits the number of searches performed. If Claude atte
 When using domain filters:
 
 - Domains should not include the HTTP/HTTPS scheme (use `example.com` instead of `https://example.com`)
-- Subdomains are automatically included (`example.com` covers `docs.example.com`)
-- Subpaths are supported (`example.com/blog`)
+- Subdomains are automatically included ( `example.com` covers `docs.example.com`)
+- Subpaths are supported ( `example.com/blog`)
 - You can use either `allowed_domains` or `blocked_domains`, but not both in the same request.
 
 #### Localization
@@ -49,7 +101,7 @@ The `user_location` parameter allows you to localize search results based on a u
 - `city`: The city name
 - `region`: The region or state
 - `country`: The country
-- `timezone`: The [IANA timezone ID](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+- `timezone`: The IANA timezone ID.
 
 ### Response
 
@@ -144,6 +196,17 @@ When displaying web results or information contained in web results to end users
 
 If an error occurs during web search, you’ll receive a response that takes the following form:
 
+```json
+{
+  "type": "web_search_tool_result",
+  "tool_use_id": "servertoolu_a93jad",
+  "content": {
+    "type": "web_search_tool_result_error",
+    "error_code": "max_uses_exceeded"
+  }
+}
+```
+
 These are the possible error codes:
 
 - `too_many_requests`: Rate limit exceeded
@@ -152,23 +215,87 @@ These are the possible error codes:
 - `query_too_long`: Query exceeds maximum length
 - `unavailable`: An internal error occurred
 
-#### pause\_turn stop reason
+#### `pause_turn` stop reason
 
 The response may include a `pause_turn` stop reason, which indicates that the API paused a long-running turn. You may provide the response back as-is in a subsequent request to let Claude continue its turn, or modify the content if you wish to interrupt the conversation.
 
 ## Prompt caching
 
-Web search works with [prompt caching](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching). To enable prompt caching, add at least one `cache_control` breakpoint in your request. The system will automatically cache up until the last `web_search_tool_result` block when executing the tool.
+Web search works with prompt caching. To enable prompt caching, add at least one `cache_control` breakpoint in your request. The system will automatically cache up until the last `web_search_tool_result` block when executing the tool.
 
 For multi-turn conversations, set a `cache_control` breakpoint on or after the last `web_search_tool_result` block to reuse cached content.
 
 For example, to use prompt caching with web search for a multi-turn conversation:
 
+```py
+import anthropic
+
+client = anthropic.Anthropic()
+
+# First request with web search and cache breakpoint
+messages = [
+    {
+        "role": "user",
+        "content": "What's the current weather in San Francisco today?"
+    }
+]
+
+response1 = client.messages.create(
+    model="claude-opus-4-20250514",
+    max_tokens=1024,
+    messages=messages,
+    tools=[{
+        "type": "web_search_20250305",
+        "name": "web_search",
+        "user_location": {
+            "type": "approximate",
+            "city": "San Francisco",
+            "region": "California",
+            "country": "US",
+            "timezone": "America/Los_Angeles"
+        }
+    }]
+)
+
+# Add Claude's response to the conversation
+messages.append({
+    "role": "assistant",
+    "content": response1.content
+})
+
+# Second request with cache breakpoint after the search results
+messages.append({
+    "role": "user",
+    "content": "Should I expect rain later this week?",
+    "cache_control": {"type": "ephemeral"}  # Cache up to this point
+})
+
+response2 = client.messages.create(
+    model="claude-opus-4-20250514",
+    max_tokens=1024,
+    messages=messages,
+    tools=[{
+        "type": "web_search_20250305",
+        "name": "web_search",
+        "user_location": {
+            "type": "approximate",
+            "city": "San Francisco",
+            "region": "California",
+            "country": "US",
+            "timezone": "America/Los_Angeles"
+        }
+    }]
+)
+# The second response will benefit from cached search results
+# while still being able to perform new searches if needed
+print(f"Cache read tokens: {response2.usage.get('cache_read_input_tokens', 0)}")
+```
+
 ## Streaming
 
 With streaming enabled, you’ll receive search events as part of the stream. There will be a pause while the search executes:
 
-```javascript
+```
 event: message_start
 data: {"type": "message_start", "message": {"id": "msg_abc123", "type": "message"}}
 
@@ -195,12 +322,26 @@ data: {"type": "content_block_start", "index": 2, "content_block": {"type": "web
 
 ## Batch requests
 
-You can include the web search tool in the [Messages Batches API](https://docs.anthropic.com/en/docs/build-with-claude/batch-processing). Web search tool calls through the Messages Batches API are priced the same as those in regular Messages API requests.
+You can include the web search tool in the Messages Batches API. Web search tool calls through the Messages Batches API are priced the same as those in regular Messages API requests.
 
 ## Usage and pricing
 
 Web search usage is charged in addition to token usage:
 
+```
+"usage": {
+  "input_tokens": 105,
+  "output_tokens": 6039,
+  "cache_read_input_tokens": 7123,
+  "cache_creation_input_tokens": 7345,
+  "server_tool_use": {
+    "web_search_requests": 1
+  }
+}
+```
+
 Web search is available on the Anthropic API for **$10 per 1,000 searches**, plus standard token costs for search-generated content. Web search results retrieved throughout a conversation are counted as input tokens, in search iterations executed during a single turn and in subsequent conversation turns.
 
 Each web search counts as one use, regardless of the number of results returned. If an error occurs during web search, the web search will not be billed.
+
+Was this page helpful?

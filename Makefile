@@ -3,7 +3,7 @@
 build: ui backend
 
 ui:
-	python3 build_frontend.py
+	./build_frontend.sh
 
 serve-ui:
 	cd frontend && bun run dev

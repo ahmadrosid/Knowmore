@@ -8,10 +8,36 @@ import {
 } from "@/components/ui/message"
 import { Button } from "@/components/ui/button"
 import { Copy, ThumbsDown, ThumbsUp } from "lucide-react"
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { type Message as MessageItem } from "@ai-sdk/react"
 import { ChatSource } from "./chat-source"
+import { ChatSourcePlaceholder } from "@/components/chat-source-placeholder"
 import { Loader } from '@/components/ui/loader';
+
+// Helper function to extract query from tool args
+function extractSearchQuery(args: any): string {
+    if (typeof args === 'string') {
+        try {
+            const parsed = JSON.parse(args);
+            return parsed.query || '';
+        } catch {
+            return args;
+        }
+    }
+    return args?.query || '';
+}
+
+// Helper function to transform web search results
+function transformSearchResults(results: any[]): any[] {
+    return results.map((result, index) => ({
+        id: `result-${index}`,
+        title: result.title || 'Untitled',
+        url: result.url || '',
+        preview: result.page_age || 'No preview available',
+        favicon: result.url ? new URL(result.url).hostname.charAt(0).toUpperCase() : '?',
+        domain: result.url ? new URL(result.url).hostname : 'unknown',
+    }));
+}
 
 function AssistantMessage({ message }: { message: MessageItem }) {
     const [liked, setLiked] = useState<boolean | null>(null)
@@ -23,12 +49,71 @@ function AssistantMessage({ message }: { message: MessageItem }) {
         setTimeout(() => setCopied(false), 2000)
     }
 
-    return (
-        <Message className="justify-start px-2">
-            <div className="flex w-full flex-col gap-4">
+    // Process message parts to render content and tool invocations
+    const renderedContent = useMemo(() => {
+        if (!message.parts || message.parts.length === 0) {
+            // Fallback to content if parts are not available
+            return (
                 <MessageContent markdown className="bg-transparent p-0">
                     {message.content}
                 </MessageContent>
+            );
+        }
+
+        return message.parts.map((part, partIndex) => {
+            switch (part.type) {
+                case 'text':
+                    return (
+                        <MessageContent key={partIndex} markdown className="bg-transparent p-0">
+                            {part.text}
+                        </MessageContent>
+                    );
+
+                case 'tool-invocation': {
+                    const invocation = part.toolInvocation as any;
+                    console.log({ invocation });
+                    const { toolName, state, args } = invocation;
+
+                    if (toolName === 'web_search') {
+                        if (state === 'call') {
+                            // Show loading state
+                            return (
+                                <div key={partIndex} className="mb-4">
+                                    <ChatSourcePlaceholder />
+                                </div>
+                            );
+                        }
+                        
+                        if (state === 'result' && invocation.result) {
+                            // Transform and display results
+                            const searchResults = transformSearchResults(invocation.result);
+                            const query = extractSearchQuery(args);
+                            const filterTags = query ? [query] : [];
+                            
+                            return (
+                                <div key={partIndex} className="mb-4">
+                                    <ChatSource 
+                                        filterTags={filterTags} 
+                                        searchResults={searchResults} 
+                                    />
+                                </div>
+                            );
+                        }
+                    }
+                    
+                    return null;
+                }
+
+                default:
+                    return null;
+            }
+        });
+    }, [message.parts, message.content]);
+
+    return (
+        <Message className="justify-start px-2">
+            <div className="flex w-full flex-col gap-4">
+                {renderedContent}
 
                 <MessageActions className="self-start">
                     <MessageAction tooltip="Copy to clipboard">
@@ -70,19 +155,13 @@ function AssistantMessage({ message }: { message: MessageItem }) {
 }
 
 export function ChatMessage({ messages, isLoading }: { messages: MessageItem[], isLoading: boolean }) {
-
     return (
         <div className="flex flex-col gap-8">
             {messages.map((message) => (
                 message.role === "user" ? (
-                    <div key={message.id} className="space-y-2">
-                        <Message className="justify-start">
-                            <MessageContent>{message.content}</MessageContent>
-                        </Message>
-                        <div className="px-2">
-                            <ChatSource filterTags={[]} searchResults={[]} />
-                        </div>
-                    </div>
+                    <Message key={message.id} className="justify-start">
+                        <MessageContent>{message.content}</MessageContent>
+                    </Message>
                 ) : (
                     <AssistantMessage key={message.id} message={message} />
                 )

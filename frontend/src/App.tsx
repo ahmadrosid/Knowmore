@@ -12,12 +12,23 @@ import { ScrollButton } from "@/components/ui/scroll-button"
 import { useState } from 'react';
 
 export default function App() {
-  const [selectedModel, setSelectedModel] = useState("claude-3-5-sonnet-20241022");
+  const [selectedModel, setSelectedModel] = useState(() => {
+    const stored = localStorage.getItem('selectedModel');
+    return stored || "claude-3-5-sonnet-latest";
+  });
+  
+  const handleModelChange = (modelId: string) => {
+    setSelectedModel(modelId);
+    localStorage.setItem('selectedModel', modelId);
+  };
+  
   const { messages, input, setInput, status, handleSubmit } = useChat({
     api: "/api/stream",
     body: {
       model: selectedModel,
-    }
+      enable_web_search: true,
+    },
+    maxSteps: 5, // Enable multi-step for tool calls
   });
 
   return (
@@ -58,7 +69,7 @@ export default function App() {
             status={status} 
             handleSubmit={handleSubmit}
             selectedModel={selectedModel}
-            onModelChange={setSelectedModel}
+            onModelChange={handleModelChange}
           />
         </div>
       </div>

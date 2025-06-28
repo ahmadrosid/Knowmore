@@ -58,23 +58,22 @@ class AnthropicWebSearch(BaseTool):
             "parameters": kwargs
         }
     
-    def to_anthropic_tool(self, max_uses=3, allowed_domains=None, blocked_domains=None, user_location=None) -> Dict[str, Any]:
+    def to_anthropic_tool(self, max_uses=5, allowed_domains=None, blocked_domains=None, user_location=None) -> Dict[str, Any]:
         """Convert to Anthropic's tool format with configurable options"""
         tool_config = {
-            "type": "web_search",
-            "web_search": {
-                "max_uses": max_uses
-            }
+            "type": "web_search_20250305",
+            "name": "web_search",
+            "max_uses": max_uses
         }
         
         # Add optional domain filtering
         if allowed_domains:
-            tool_config["web_search"]["allowed_domains"] = allowed_domains
+            tool_config["allowed_domains"] = allowed_domains
         elif blocked_domains:
-            tool_config["web_search"]["blocked_domains"] = blocked_domains
+            tool_config["blocked_domains"] = blocked_domains
         
         # Add optional user location
         if user_location:
-            tool_config["web_search"]["user_location"] = user_location
+            tool_config["user_location"] = user_location
             
         return tool_config
