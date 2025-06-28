@@ -9,10 +9,15 @@ import {
   ChatContainerScrollAnchor,
 } from "@/components/ui/chat-container"
 import { ScrollButton } from "@/components/ui/scroll-button"
+import { useState } from 'react';
 
 export default function App() {
+  const [selectedModel, setSelectedModel] = useState("claude-3-5-sonnet-20241022");
   const { messages, input, setInput, status, handleSubmit } = useChat({
     api: "/api/stream",
+    body: {
+      model: selectedModel,
+    }
   });
 
   return (
@@ -47,7 +52,14 @@ export default function App() {
           )}
         >
           {messages.length === 0 && <ChatHeader />}
-          <ChatInput input={input} setInput={setInput} status={status} handleSubmit={handleSubmit} />
+          <ChatInput 
+            input={input} 
+            setInput={setInput} 
+            status={status} 
+            handleSubmit={handleSubmit}
+            selectedModel={selectedModel}
+            onModelChange={setSelectedModel}
+          />
         </div>
       </div>
     </main >

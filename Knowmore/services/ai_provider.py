@@ -17,13 +17,13 @@ class AIProviderFactory:
     def get_supported_models():
         return {
             'claude': [
-                'claude-3-5-sonnet-20240620',
-                'claude-3-haiku-20240307',
-                'claude-3-opus-20240229'
+                'claude-opus-4-20250514',
+                'claude-sonnet-4-20250514',
+                'claude-3-7-sonnet-20250219'
             ],
             'openai': [
-                'gpt-3.5-turbo',
-                'gpt-4',
-                'gpt-4-turbo-preview'
+                'gpt-4o-2024-08-06',
+                'o4-mini-2025-04-16',
+                'gpt-4.1-2025-04-14'
             ]
         }

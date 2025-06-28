@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowUp, Square } from "lucide-react"
 import { type ChatRequestOptions } from "@ai-sdk/ui-utils";
 import { cn } from "@/lib/utils";
+import { ModelSelector } from "./model-selector";
 
 interface ChatInputProps {
     input: string;
@@ -17,10 +18,12 @@ interface ChatInputProps {
     setInput: (value: string) => void;
     handleSubmit: (event?: {
         preventDefault?: () => void;
-    }, chatRequestOptions?: ChatRequestOptions) => void;   
+    }, chatRequestOptions?: ChatRequestOptions) => void;
+    selectedModel: string;
+    onModelChange: (modelId: string) => void;
 }
 
-export function ChatInput({ input, setInput, handleSubmit, status }: ChatInputProps) {
+export function ChatInput({ input, setInput, handleSubmit, status, selectedModel, onModelChange }: ChatInputProps) {
 
   const isLoading = status === "streaming" || status === "submitted";
 
@@ -33,7 +36,8 @@ export function ChatInput({ input, setInput, handleSubmit, status }: ChatInputPr
       className="w-full max-w-(--breakpoint-md)"
     >
       <PromptInputTextarea placeholder="Ask me anything..." />
-      <PromptInputActions className="justify-end pt-2">
+      <PromptInputActions className="justify-end pt-2 gap-2">
+        <ModelSelector selectedModel={selectedModel} onModelChange={onModelChange} />
         <PromptInputAction
           tooltip={isLoading ? "Stop generation" : "Send message"}
         >

@@ -6,7 +6,7 @@ ui:
 	python3 build_frontend.py
 
 serve-ui:
-	cd frontend && npm run dev
+	cd frontend && bun run dev
 
 backend:
 	docker build . -t knowmore

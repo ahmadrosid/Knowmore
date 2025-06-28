@@ -10,24 +10,12 @@ class OpenAIService:
         )
 
     async def stream_response(self, query, model="gpt-3.5-turbo"):
-        try:
-            stream = await self.client.chat.completions.create(
-                model=model,
-                messages=[{"role": "user", "content": query}],
-                stream=True,
-                max_tokens=1024,
-            )
-            
-            async for chunk in stream:
-                if chunk.choices[0].delta.content is not None:
-                    message = {
-                        'content': chunk.choices[0].delta.content
-                    }
-                    data = json.dumps(message)
-                    yield "data: " + data + "\n\n"
-            
-            yield f"data: <END_STREAMING_SSE>\n\n"
-
-        except Exception as e:
-            print(f"Error occurred: {e}")
-            yield f"data: {e}\n\n"
+        stream = await self.client.chat.completions.create(
+            model=model,
+            messages=[{"role": "user", "content": query}],
+            stream=True,
+            max_tokens=1024,
+        )
+        async for chunk in stream:
+            if chunk.choices[0].delta.content is not None:
+                yield f'0:{json.dumps(chunk.choices[0].delta.content)}\n'

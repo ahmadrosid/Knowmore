@@ -42,17 +42,6 @@ async def event_stream(question, model):
     }
     yield f'd:{json.dumps(finish_data)}\n'
 
-async def test_stream_async(request):
-    body = json.loads(request.body)
-    messages = body.get('messages', [])
-    model = body.get('model', 'claude-3-5-sonnet-20240620')
-    last_message = ''
-    for msg in reversed(messages):
-        if msg.get('role') == 'user':
-            last_message = msg.get('content', '')
-            break
-    return SSEResponse(event_stream(model, last_message), content_type='text/event-stream')
-
 async def sse_stream(request):
     if request.method != 'POST':
         async def error_stream():
