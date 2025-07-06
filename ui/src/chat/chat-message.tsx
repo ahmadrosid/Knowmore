@@ -26,14 +26,14 @@ function extractSearchQuery(args: any): string {
     return args?.query || '';
 }
 
-function transformSearchResults(results: any): any[] {
+function transformSearchResults(results: any, idPrefix: string = ''): any[] {
     if (!Array.isArray(results)) {
         console.warn('transformSearchResults: Expected array but received:', typeof results, results);
         return [];
     }
     
     return results.map((result, index) => ({
-        id: `result-${index}`,
+        id: `${idPrefix}result-${index}`,
         title: result.title || 'Untitled',
         url: result.url || '',
         preview: result.description || result.snippet || 'No preview available',
@@ -61,54 +61,72 @@ function AssistantMessage({ message }: { message: MessageItem }) {
             );
         }
 
-        return message.parts.map((part, partIndex) => {
-            switch (part.type) {
-                case 'text':
-                    return (
-                        <MessageContent key={partIndex} markdown className="bg-transparent p-0">
-                            {part.text}
-                        </MessageContent>
-                    );
+        // Collect all search results first
+        const allSearchResults: any[] = [];
+        const allFilterTags: string[] = [];
+        let hasSearches = false;
+        let searchesLoading = false;
 
-                case 'tool-invocation': {
-                    const invocation = part.toolInvocation as any;
-                    const { toolName, state, args } = invocation;
+        // First pass: collect all search data
+        message.parts.forEach((part, partIndex) => {
+            if (part.type === 'tool-invocation') {
+                const invocation = part.toolInvocation as any;
+                const { toolName, state, args } = invocation;
 
-                    if (toolName === 'web_search') {
-                        // Show loading state immediately when web_search tool is detected without results
-                        if (!invocation.result) {
-                            return (
-                                <div key={partIndex} className="mb-4">
-                                    <ChatSourcePlaceholder />
-                                </div>
-                            );
-                        }
+                if (toolName === 'web_search') {
+                    hasSearches = true;
+                    
+                    if (!invocation.result) {
+                        searchesLoading = true;
+                    } else if (state === 'result' && invocation.result) {
+                        const resultsArray = invocation.result?.results || invocation.result || [];
+                        const searchResults = transformSearchResults(resultsArray, `search-${partIndex}-`);
+                        allSearchResults.push(...searchResults);
                         
-                        if (state === 'result' && invocation.result) {
-                            // Transform and display results with additional safety checks
-                            const resultsArray = invocation.result?.results || invocation.result || [];
-                            const searchResults = transformSearchResults(resultsArray);
-                            const query = extractSearchQuery(args);
-                            const filterTags = query ? [query] : [];
-                            
-                            return (
-                                <div key={partIndex} className="mb-4">
-                                    <ChatSource 
-                                        filterTags={filterTags} 
-                                        searchResults={searchResults} 
-                                    />
-                                </div>
-                            );
+                        const query = extractSearchQuery(args);
+                        if (query && !allFilterTags.includes(query)) {
+                            allFilterTags.push(query);
                         }
                     }
-                    
-                    return null;
                 }
-
-                default:
-                    return null;
             }
         });
+
+        // Second pass: render content
+        const content: React.ReactNode[] = [];
+        
+        // If we have searches, show the combined source component first
+        if (hasSearches) {
+            if (searchesLoading) {
+                content.push(
+                    <div key="search-loading" className="mb-4">
+                        <ChatSourcePlaceholder />
+                    </div>
+                );
+            } else if (allSearchResults.length > 0) {
+                content.push(
+                    <div key="search-results" className="mb-4">
+                        <ChatSource 
+                            filterTags={allFilterTags} 
+                            searchResults={allSearchResults} 
+                        />
+                    </div>
+                );
+            }
+        }
+
+        // Render text parts
+        message.parts.forEach((part, partIndex) => {
+            if (part.type === 'text') {
+                content.push(
+                    <MessageContent key={`text-${partIndex}`} markdown className="bg-transparent p-0">
+                        {part.text}
+                    </MessageContent>
+                );
+            }
+        });
+
+        return content;
     }, [message.parts, message.content]);
 
     return (
