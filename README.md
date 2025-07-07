@@ -4,6 +4,10 @@
 
 ![demo-knowmore](demo-knowmore.png)
 
+## Demo
+
+Watch the YouTube demo: https://www.youtube.com/watch?v=_mFrt65fLQA
+
 ## Requirements
 
 - Python >= 3.10
