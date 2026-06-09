@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import useSWR from "swr"
 
-export type ModelProvider = "claude" | "openai"
+export type ModelProvider = "claude" | "openai" | "openrouter"
 
 export interface Model {
     id: string
