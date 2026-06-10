@@ -1,9 +1,13 @@
 import json
 import asyncio
+import environ
 from datetime import datetime
 from typing import Optional, Dict, Any, List
 from .claude_service import ClaudeService
 from .web_search_firecrawl import FirecrawlWebSearch
+from .web_search_exa import ExaWebSearch
+
+env = environ.Env()
 
 
 class SearchOrchestrator:
@@ -14,7 +18,10 @@ class SearchOrchestrator:
     
     def __init__(self):
         self.claude_service = ClaudeService()
-        self.search_tool = FirecrawlWebSearch()
+        if env("EXA_API_KEY", default=None):
+            self.search_tool = ExaWebSearch()
+        else:
+            self.search_tool = FirecrawlWebSearch()
     
     
     async def generate_search_queries(self, messages: List[Dict[str, Any]]) -> List[str]:

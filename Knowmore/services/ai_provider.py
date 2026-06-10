@@ -1,5 +1,6 @@
 from .claude_service import ClaudeService
 from .openai_service import OpenAIService
+from .openrouter_service import OpenRouterService
 
 
 class AIProviderFactory:
@@ -9,6 +10,8 @@ class AIProviderFactory:
             return ClaudeService()
         elif model_name.startswith('gpt') or model_name.startswith('o4'):
             return OpenAIService()
+        elif '/' in model_name:
+            return OpenRouterService()
         else:
             # Default to Claude
             return ClaudeService()
@@ -28,5 +31,11 @@ class AIProviderFactory:
                 {'id': 'gpt-4o-2024-08-06', 'name': 'GPT-4o'},
                 {'id': 'o4-mini-2025-04-16', 'name': 'O4 Mini'},
                 {'id': 'gpt-4.1-2025-04-14', 'name': 'GPT-4.1'}
+            ],
+            'openrouter': [
+                {'id': 'google/gemini-2.5-flash', 'name': 'Gemini 2.5 Flash (OpenRouter)'},
+                {'id': 'google/gemini-2.5-pro', 'name': 'Gemini 2.5 Pro (OpenRouter)'},
+                {'id': 'meta-llama/llama-3.3-70b-instruct', 'name': 'Llama 3.3 70B (OpenRouter)'},
+                {'id': 'deepseek/deepseek-chat', 'name': 'DeepSeek V3 (OpenRouter)'}
             ]
         }
