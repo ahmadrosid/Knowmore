@@ -18,7 +18,10 @@ class SearchOrchestrator:
     
     def __init__(self):
         self.claude_service = ClaudeService()
-        if env("EXA_API_KEY", default=None):
+        if env("WEB_SEARCH_PROVIDER", default="").strip().lower() == "parallel":
+            from .web_search_parallel import ParallelWebSearch
+            self.search_tool = ParallelWebSearch()
+        elif env("EXA_API_KEY", default=None):
             self.search_tool = ExaWebSearch()
         else:
             self.search_tool = FirecrawlWebSearch()
