@@ -2,6 +2,7 @@ node_modules/
 static/CACHE/
 static/dist/
 .venv/
+__pycache__/
 bun.lockb
 db.sqlite3
 .env
