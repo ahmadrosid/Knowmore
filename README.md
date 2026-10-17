@@ -27,6 +27,29 @@ SECRET_KEY=
 
 For now it integrates with Anthropic AI. Soon will be adding OpenAI GPT-4 and other LLMs.
 
+### Optional Parallel web search
+
+Use [Parallel Search MCP](https://docs.parallel.ai/integrations/mcp/search-mcp)
+for free web search without a search API key or Parallel account. Add this to
+your `.env`, install the Python requirements, and restart the backend:
+
+```bash
+WEB_SEARCH_PROVIDER=parallel
+```
+
+Ask a question in the chat that needs current sources; the chat enables web search.
+Parallel's anonymous endpoint uses Fast mode and returns relevant page excerpts;
+these excerpts appear as sources and provide context for the answer. This provider
+uses excerpts rather than scraping full pages. Free access has usage limits and
+is intended for exploration and light use.
+
+`ANTHROPIC_API_KEY` is still required for Knowmore's search-query generation,
+along with the credentials for your selected answer model. Neither `EXA_API_KEY`
+nor `FIRE_CRAWL_API_TOKEN` is needed when Parallel is selected. Leave
+`WEB_SEARCH_PROVIDER` unset to keep the existing behavior: Exa when `EXA_API_KEY`
+is configured, otherwise Firecrawl. API clients can still disable search with
+`enable_web_search: false`.
+
 ## Quick Start
 
 ### Using Make (Recommended)
